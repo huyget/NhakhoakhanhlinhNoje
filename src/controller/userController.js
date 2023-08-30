@@ -41,8 +41,9 @@ let handleLogin = async (req, res) =>{
 }
 
 let handleGetAllUser = async (req, res) =>{
-    let id = req.body.id; // .id tra ra 2 gia tri truyen vào đó là ALL HOẶC SINGLE
-if (!id){
+    let id = req.query.id; // .id tra ra 2 gia tri truyen vào đó là ALL HOẶC SINGLE
+//truyên tham số vào trên url (vi dụ http://localhost:3000/api/get-all-user?id=12) còn req.body thì khong có 
+    if (!id){
         return res.status(200).json({
         errCode : 1,
         message:'(missing required parameter( thieu tham so bat buoc))',
