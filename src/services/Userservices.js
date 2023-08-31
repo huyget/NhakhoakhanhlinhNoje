@@ -80,6 +80,7 @@ let checkUseremail = (userEmail) =>{
         }
     })
 }
+//liet ke all user
  let getAllUsers = (userId)=>{
     return new Promise(async(resolve, reject) => {
         try {
@@ -107,7 +108,119 @@ let checkUseremail = (userEmail) =>{
         }
     })
  }
+ //them moi user
+ let createNewUser =(data) =>{
+    return new Promise(async(resolve, reject) => {
+        try {
+            let check = await checkUseremail(data.email)
+
+            if(check === true){
+                resolve({
+                    errcode: 1,
+                    message:'Email da ton tai, vui long nhap lai email khac'
+                })
+            }
+            let hashPasswordFromBcrypt = await hashUserPassword(data.password)
+            await db.User.create({
+                email: data.email,
+                password: hashPasswordFromBcrypt,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                address: data.address,
+                phoneNumber: data.phoneNumber,
+                gender:data.gender === '1' ? true : false,
+                roleId: data.RoleId
+            })
+            resolve ({
+                errcode: 0,
+                message:'Create user successfully! them user thanh cong',
+                data:data
+                
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+ }
+ //ma hoa password
+ let hashUserPassword = (password) =>{
+    return new Promise(async(resolve, reject) =>{
+        try {
+            let hashPassword =await bcrypt.hashSync(password, salt);
+            resolve(hashPassword)
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+// xoa user 
+let deleteUser = (userId)=>{
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne(
+                {where:{id:userId}}
+            )
+            if(!user){
+                resolve({
+                    errcode: 2,
+                    errMessage:`this user isn't exist-nguoi dung nay khong ton tai`
+                })
+            }
+            //tranh loi user.destroy is not function(nhung ham lien qua den sequelize thi chi dung duoc khi sequelize goi toi)
+            await db.User.destroy({
+                    where:{id: userId},
+            });
+            resolve({
+                errcode: 0,
+                errMessage: `this user is delete- user da duoc xoa`
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+//edit user
+let updateUser = (data) =>{
+    return new Promise(async(resolve, reject) => {
+        if(!data.id){
+            resolve({
+                errcode: 2,
+                errMessage: 'vui long chon id'
+            })
+        }
+        try {
+            
+            let user = await db.User.findOne({  // tao the user va lay gia trij databyte va gan cho user
+                where: {id : data.id},
+                raw :false// cach thu 2 de khong gap loi user.save is not function
+            })
+            //gan gia tri cho nhap tu may vao gia tri lay ra tu databiyte
+            if (user) {
+                
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
+
+                await user.save();
+                resolve({
+                    errcode: 0,
+                    errMessage: `update the user succeed`
+                })
+            } else {
+                resolve({
+                    errcode:1 ,
+                    errMessage:'can not find this id'
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 module.exports={
     handleUserlogin:handleUserlogin,
     getAllUsers : getAllUsers,
+    createNewUser:createNewUser,
+    deleteUser:deleteUser,
+    updateUser:updateUser,
 }

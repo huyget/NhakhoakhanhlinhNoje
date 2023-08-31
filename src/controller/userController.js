@@ -39,7 +39,7 @@ let handleLogin = async (req, res) =>{
     })
 
 }
-
+//liet ke all user
 let handleGetAllUser = async (req, res) =>{
     let id = req.query.id; // .id tra ra 2 gia tri truyen vào đó là ALL HOẶC SINGLE
 //truyên tham số vào trên url (vi dụ http://localhost:3000/api/get-all-user?id=12) còn req.body thì khong có 
@@ -58,8 +58,33 @@ let handleGetAllUser = async (req, res) =>{
         user
     })
 }
-
+//them moi user
+let handleCreateUrer =async (req, res) =>{
+   let message = await Userservices.createNewUser(req.body)
+   console.log(message)
+   return res.status(200).json(message)
+}
+//delete user
+let handleDeleteUser = async (req, res) =>{
+    if(!req.body.id){
+        res.status(200).json({
+            errCode : 1,
+            errMessage:'missing required parameter-thieu tham so bat buoc'
+        })
+    }
+    let message = await Userservices.deleteUser(req.body.id)
+    return res.status(200).json(message)
+}
+//edit user
+let handleEditUser = async (req, res) =>{
+    let data = req.body
+    let message = await Userservices.updateUser(data)
+    return res.status(200).json(message)
+}
 module.exports = {
     handleLogin:handleLogin,
     handleGetAllUser:handleGetAllUser,
+    handleCreateUrer:handleCreateUrer,
+    handleDeleteUser:handleDeleteUser,
+    handleEditUser: handleEditUser,
 }

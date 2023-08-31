@@ -99,7 +99,8 @@ let updateUserData = (data) =>{
         //lay ra gia tri tronfg databiyte va so sanh voi gia tri nhap vao bang function : findOne 
         try {
             let user = await db.User.findOne({  // tao the user va lay gia trij databyte va gan cho user
-                where: {id : data.id}
+                where: {id : data.id},
+                raw : false
             })
             //gan gia tri cho nhap tu may vao gia tri lay ra tu databiyte
             if (user) {
@@ -129,7 +130,7 @@ let deleteUserData = (userId) =>{
                 where:{ id: userId}
             });
             if (user) {
-                await user.destroy();
+                await db.User.destroy({where:{ id: userId}});
                 let AllUsers = await db.User.findAll();
                 resolve(AllUsers)
             } else {
