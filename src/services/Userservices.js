@@ -117,10 +117,11 @@ let checkUseremail = (userEmail) =>{
             if(check === true){
                 resolve({
                     errcode: 1,
-                    message:'Email da ton tai, vui long nhap lai email khac'
+                    errmessage:'Email da ton tai, vui long nhap lai email khac'
                 })
             }
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password)
+            else{
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password)
             await db.User.create({
                 email: data.email,
                 password: hashPasswordFromBcrypt,
@@ -137,6 +138,8 @@ let checkUseremail = (userEmail) =>{
                 data:data
                 
             })
+            }
+            
         } catch (e) {
             reject(e)
         }
