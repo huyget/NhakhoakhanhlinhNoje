@@ -207,12 +207,12 @@ let updateUser = (data) =>{
                 await user.save();
                 resolve({
                     errcode: 0,
-                    errMessage: `update the user succeed`
+                    errMessage: `update the user succeed- câp nhật người dung thành công`
                 })
             } else {
                 resolve({
                     errcode:1 ,
-                    errMessage:'can not find this id'
+                    errMessage:'can not find this id- không thể tim thấy id'
                 })
             }
         } catch (e) {
